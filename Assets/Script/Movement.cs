@@ -11,7 +11,7 @@ public class Snake : MonoBehaviour
     public GameObject gameOverMenu;
 
     private ScoreText scoreText; // Reference to ScoreText script
-    private int nextGrowthTime = 10; // First growth at 10 seconds
+    private int nextGrowthTime = 4; // First growth at 4 seconds
 
     void Start()
     {
@@ -28,7 +28,7 @@ public class Snake : MonoBehaviour
             if (elapsedSeconds >= nextGrowthTime)
             {
                 Grow();
-                nextGrowthTime += 10; // Set the next growth time
+                nextGrowthTime += 4; // Set the next growth time
                 Debug.Log($"Snake grew at {elapsedSeconds} seconds. Next growth at {nextGrowthTime}s.");
             }
         }
