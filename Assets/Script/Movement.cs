@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Snake : MonoBehaviour
 {
@@ -7,33 +8,46 @@ public class Snake : MonoBehaviour
     private Vector2 direction = Vector2.right;
     private List<Transform> snakeBody = new List<Transform>();
     public GameObject bodyPrefab;
+    public GameObject gameOverMenu;
+
+    private ScoreText scoreText; // Reference to ScoreText script
+    private int nextGrowthTime = 10; // First growth at 10 seconds
 
     void Start()
     {
+        Debug.Log("Snake script started!");
+        scoreText = FindObjectOfType<ScoreText>(); // Find ScoreText script in scene
         InvokeRepeating(nameof(Move), moveSpeed, moveSpeed);
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.W) && direction != Vector2.down)
-            direction = Vector2.up;
-        else if (Input.GetKeyDown(KeyCode.S) && direction != Vector2.up)
-            direction = Vector2.down;
-        else if (Input.GetKeyDown(KeyCode.A) && direction != Vector2.right)
-            direction = Vector2.left;
-        else if (Input.GetKeyDown(KeyCode.D) && direction != Vector2.left)
-            direction = Vector2.right;
+        if (scoreText != null)
+        {
+            int elapsedSeconds = Mathf.FloorToInt(scoreText.GetElapsedTime());
+            if (elapsedSeconds >= nextGrowthTime)
+            {
+                Grow();
+                nextGrowthTime += 10; // Set the next growth time
+                Debug.Log($"Snake grew at {elapsedSeconds} seconds. Next growth at {nextGrowthTime}s.");
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.W) && direction != Vector2.down) direction = Vector2.up;
+        else if (Input.GetKeyDown(KeyCode.S) && direction != Vector2.up) direction = Vector2.down;
+        else if (Input.GetKeyDown(KeyCode.A) && direction != Vector2.right) direction = Vector2.left;
+        else if (Input.GetKeyDown(KeyCode.D) && direction != Vector2.left) direction = Vector2.right;
     }
 
     void Move()
     {
         Vector2 newPosition = (Vector2)transform.position + direction;
 
-        // Move the body segments
         for (int i = snakeBody.Count - 1; i > 0; i--)
         {
             snakeBody[i].position = snakeBody[i - 1].position;
         }
+
         if (snakeBody.Count > 0)
             snakeBody[0].position = transform.position;
 
@@ -44,18 +58,23 @@ public class Snake : MonoBehaviour
     {
         GameObject bodyPart = Instantiate(bodyPrefab, transform.position, Quaternion.identity);
         snakeBody.Add(bodyPart.transform);
+        Debug.Log("Snake grew! New segment added.");
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Food"))
+        if (other.CompareTag("Evil Blocks") || other.CompareTag("Apple") || other.CompareTag("Wall") || other.CompareTag("Body"))
         {
-            Grow();
-            Destroy(other.gameObject);
+            GameOver();
         }
-        else if (other.CompareTag("Wall") || other.CompareTag("Body"))
+    }
+
+    void GameOver()
+    {
+        if (gameOverMenu != null)
         {
-            UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+            gameOverMenu.SetActive(true);
         }
+        SceneManager.LoadScene(0);
     }
 }

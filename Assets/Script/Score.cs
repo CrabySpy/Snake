@@ -3,13 +3,12 @@ using TMPro;
 
 public class ScoreText : MonoBehaviour
 {
-    [SerializeField] 
-    TextMeshProUGUI scoreText;
+    [SerializeField]
+    private TextMeshProUGUI scoreText;
 
     private float elapsedTime;
     private bool isTimerRunning = true;
 
-    // Update is called once per frame
     void Update()
     {
         if (isTimerRunning)
@@ -17,6 +16,11 @@ public class ScoreText : MonoBehaviour
             elapsedTime += Time.deltaTime;
             scoreText.text = Mathf.FloorToInt(elapsedTime).ToString();
         }
-        //Debug.Log(elapsedTime);
+    }
+
+    // Getter method to access elapsed time
+    public float GetElapsedTime()
+    {
+        return elapsedTime;
     }
 }
