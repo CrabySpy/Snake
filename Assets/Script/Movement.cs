@@ -10,13 +10,12 @@ public class Snake : MonoBehaviour
     public GameObject bodyPrefab;
     public GameObject gameOverMenu;
 
-    private ScoreText scoreText; // Reference to ScoreText script
-    private int nextGrowthTime = 4; // First growth at 4 seconds
+    private ScoreText scoreText;
+    private int nextGrowthTime = 4;
 
     void Start()
     {
-        Debug.Log("Snake script started!");
-        scoreText = FindObjectOfType<ScoreText>(); // Find ScoreText script in scene
+        scoreText = FindObjectOfType<ScoreText>();
         InvokeRepeating(nameof(Move), moveSpeed, moveSpeed);
     }
 
@@ -28,7 +27,7 @@ public class Snake : MonoBehaviour
             if (elapsedSeconds >= nextGrowthTime)
             {
                 Grow();
-                nextGrowthTime += 4; // Set the next growth time
+                nextGrowthTime += 2;
                 Debug.Log($"Snake grew at {elapsedSeconds} seconds. Next growth at {nextGrowthTime}s.");
             }
         }
@@ -58,21 +57,25 @@ public class Snake : MonoBehaviour
     {
         GameObject bodyPart = Instantiate(bodyPrefab, transform.position, Quaternion.identity);
         snakeBody.Add(bodyPart.transform);
-        Debug.Log("Snake grew! New segment added.");
     }
 
-    void OnTriggerEnter2D(Collider2D other)
+    //  FIXED OnTriggerEnter2D Function with Parameter
+    /*void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Evil Blocks") || other.CompareTag("Apple") || other.CompareTag("Wall") || other.CompareTag("Body"))
+        // Debug.Log($"Collided with: {other.gameObject.name}"); // Debug collision
+
+        if (other.CompareTag("Wall"))
         {
+            Debug.Log("Collided with the wall! Game Over.");
             GameOver();
         }
     }
-
+*/
     void GameOver()
     {
         if (gameOverMenu != null)
         {
+            Time.timeScale = 0f; // Pause the game
             gameOverMenu.SetActive(true);
         }
         SceneManager.LoadScene(0);
