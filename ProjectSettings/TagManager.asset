@@ -46,5 +46,8 @@ TagManager:
   - name: Background
     uniqueID: 1338991157
     locked: 0
+  - name: Snake
+    uniqueID: 1991522287
+    locked: 0
   m_RenderingLayers:
   - Default
